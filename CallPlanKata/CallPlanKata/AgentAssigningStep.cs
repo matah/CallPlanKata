@@ -13,6 +13,10 @@ namespace CallPlanKata
             {
                 agentGroup = "A";
             }
+            else
+            {
+                agentGroup = "B";
+            }
             
             return string.Format("Deliver to group \"{0}\" and Agent \"{1}\"\n", agentGroup, 1);
         }
