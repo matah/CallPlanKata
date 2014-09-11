@@ -96,6 +96,33 @@ namespace CallPlanKata
             StringAssert.Contains("Invoke function with \"bob@test.com\", response is \"Error Xyz\"", result);
             StringAssert.Contains("Deliver to group \"C\" and Agent \"1\"", result);
         }
+
+        [Test]
+        public void GivenAnInteractionComesIntoTheSystemWhenTheWebServiceRespondsWithATimeoutThenTheInteractionGetsAssignedToAnAgentInGroupC()
+        {
+            var interaction = new Interaction()
+            {
+                Id = "bob@test.com",
+                Type = InteractionType.email
+            };
+
+            var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
+            var agentAssigningStep = new AgentAssigningStep();
+
+            var callPlan = new CallPlan();
+            callPlan.AppendStep(getOrginatorSpecificDataStep);
+            callPlan.AppendStep(agentAssigningStep);
+
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Throw(new TimeoutException());
+
+            callPlan.ReceiveInteraction(interaction);
+
+            var result = callPlan.PrintSummary();
+
+            StringAssert.Contains("Receive email from \"bob@test.com\"", result);
+            StringAssert.Contains("Invoke function with \"bob@test.com\", response is \"Time-out\"", result);
+            StringAssert.Contains("Deliver to group \"C\" and Agent \"1\"", result);
+        }
     }
 }
 
