@@ -9,7 +9,13 @@ namespace CallPlanKata
         {
             var agentGroup = "";
 
-            if(Int32.Parse(interaction.Data) % 2 == 0)
+            var response = 0;
+
+            if(!Int32.TryParse(interaction.Data, out response))
+            {
+                agentGroup = "C";
+            }
+            else if(response % 2 == 0)
             {
                 agentGroup = "A";
             }

@@ -15,9 +15,19 @@ namespace CallPlanKata
 
         public string Execute(Interaction interaction)
         {
-            var response = _webService.GetOriginatorSpecificData(interaction);
-            interaction.Data = response.ToString();
-            return string.Format("Invoke function with \"{0}\", response is \"{1}\"", interaction.Id, response);
+            int response;
+
+            try
+            {
+                response = _webService.GetOriginatorSpecificData(interaction);
+                interaction.Data = response.ToString();
+            }
+            catch(Exception)
+            {
+                interaction.Data = "Error Xyz";
+            }
+
+            return string.Format("Invoke function with \"{0}\", response is \"{1}\"\n", interaction.Id, interaction.Data);
         }
 	}
 
