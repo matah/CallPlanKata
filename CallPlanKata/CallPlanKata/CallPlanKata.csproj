@@ -35,6 +35,10 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HappyPathTests.cs" />
+    <Compile Include="IWebService.cs" />
+    <Compile Include="AgentAssigner.cs" />
+    <Compile Include="FakeWebService.cs" />
+    <Compile Include="Interaction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
