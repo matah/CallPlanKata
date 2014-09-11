@@ -24,6 +24,21 @@ namespace CallPlanKata
             };
 
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(2);
+
+            var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
+            var agentAssigningStep = new AgentAssigningStep();
+
+            var callPlan = new CallPlan();
+            callPlan.AppendStep(getOrginatorSpecificDataStep);
+            callPlan.AppendStep(agentAssigningStep);
+
+            callPlan.ReceiveInteraction(interaction);
+
+            var result = callPlan.PrintSummary();
+
+            StringAssert.Contains("Receive email from \"bob@test.com\"", result);
+            StringAssert.Contains("Invoke function with \"bob@test.com\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
         }
     }
 }

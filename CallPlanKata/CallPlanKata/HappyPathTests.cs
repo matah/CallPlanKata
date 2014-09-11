@@ -14,6 +14,7 @@ namespace CallPlanKata
         }
 
         [Test]
+        [Ignore("Experiment with initial architecture only")]
         public void HappyPathTest()
         {
             var interaction = new Interaction()
