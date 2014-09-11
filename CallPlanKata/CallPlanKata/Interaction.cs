@@ -7,7 +7,7 @@ namespace CallPlanKata
 	{
         public string Id { get; set; }
 
-        public Type Type {get; set;}
+        public InteractionType Type {get; set;}
 	}
 
     public enum InteractionType

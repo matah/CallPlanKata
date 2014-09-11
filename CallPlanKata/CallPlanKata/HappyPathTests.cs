@@ -7,12 +7,10 @@ namespace CallPlanKata
     public class HappyPathTests
     {
         private readonly IWebService _fakeWebService;
-        private readonly AgentAssigner _agentAssigner;
 
         public HappyPathTests()
         {
             _fakeWebService = new FakeWebService();
-            _agentAssigner = new AgentAssigner();
         }
 
         [Test]
@@ -26,7 +24,17 @@ namespace CallPlanKata
 
             var response = _fakeWebService.GetOriginatorSpecificData(interaction);
 
-            var result = _agentAssigner.AssignAgentToInteractionFromResponse(interaction, response);
+            var callPlan = new CallPlan();
+
+            var getOriginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
+            var agentAssigningStep = new AgentAssigningStep();
+
+            callPlan.AppendStep(getOriginatorSpecificDataStep);
+            callPlan.AppendStep(agentAssigningStep);
+
+            callPlan.ReceiveInteraction(interaction);
+
+            var summary = callPlan.PrintSummary();
         }
     }
 }

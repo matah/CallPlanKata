@@ -31,17 +31,28 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HappyPathTests.cs" />
     <Compile Include="IWebService.cs" />
-    <Compile Include="AgentAssigner.cs" />
     <Compile Include="FakeWebService.cs" />
     <Compile Include="Interaction.cs" />
+    <Compile Include="Test\IntegrationTests.cs" />
+    <Compile Include="CallPlan.cs" />
+    <Compile Include="IStep.cs" />
+    <Compile Include="StepResult.cs" />
+    <Compile Include="GetOriginatorSpecificDataStep.cs" />
+    <Compile Include="AgentAssigningStep.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test\" />
   </ItemGroup>
 </Project>

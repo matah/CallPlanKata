@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace CallPlanKata
 {
-	interface IWebService
+	public interface IWebService
 	{
         int GetOriginatorSpecificData(Interaction interaction);
 	}
