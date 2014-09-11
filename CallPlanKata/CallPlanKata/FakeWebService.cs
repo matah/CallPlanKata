@@ -7,7 +7,7 @@ namespace CallPlanKata
 	{
         public int GetOriginatorSpecificData(Interaction interaction)
         {
-            throw new NotImplementedException();
+            return 2;
         }
 	}
 

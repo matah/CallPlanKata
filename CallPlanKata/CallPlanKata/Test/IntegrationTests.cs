@@ -14,16 +14,15 @@ namespace CallPlanKata
             _fakeWebService = MockRepository.GenerateMock<IWebService>();
         }
 
-        [Test]
-        public void GivenAnInteractionComesIntoTheSystemWhenTheWebServiceRespondsWithAnEvenNumberThenTheInteractionGetsAssignedToAnAgentInGroupA()
+        [TestCase(2)]
+        [TestCase(4)]
+        public void GivenAnInteractionComesIntoTheSystemWhenTheWebServiceRespondsWithAnEvenNumberThenTheInteractionGetsAssignedToAnAgentInGroupA(int webServiceResponse)
         {
             var interaction = new Interaction()
             {
                 Id = "bob@test.com",
-                Type = InteractionType.Email
+                Type = InteractionType.email
             };
-
-            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(2);
 
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var agentAssigningStep = new AgentAssigningStep();
@@ -32,12 +31,14 @@ namespace CallPlanKata
             callPlan.AppendStep(getOrginatorSpecificDataStep);
             callPlan.AppendStep(agentAssigningStep);
 
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(webServiceResponse);
+
             callPlan.ReceiveInteraction(interaction);
 
             var result = callPlan.PrintSummary();
 
             StringAssert.Contains("Receive email from \"bob@test.com\"", result);
-            StringAssert.Contains("Invoke function with \"bob@test.com\", response is \"2\"", result);
+            StringAssert.Contains("Invoke function with \"bob@test.com\", response is \""+webServiceResponse+"\"", result);
             StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
         }
     }

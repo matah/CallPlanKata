@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using System.Web.Script.Serialization;
 
 namespace CallPlanKata
 {
@@ -12,9 +13,11 @@ namespace CallPlanKata
             _webService = webService;
         }
 
-        public string Execute(string input)
+        public string Execute(Interaction interaction)
         {
-            throw new NotImplementedException();
+            var response = _webService.GetOriginatorSpecificData(interaction);
+            interaction.Data = response.ToString();
+            return string.Format("Invoke function with \"{0}\", response is \"{1}\"", interaction.Id, response);
         }
 	}
 
