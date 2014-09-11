@@ -44,7 +44,6 @@
     <Compile Include="Test\IntegrationTests.cs" />
     <Compile Include="CallPlan.cs" />
     <Compile Include="IStep.cs" />
-    <Compile Include="StepResult.cs" />
     <Compile Include="GetOriginatorSpecificDataStep.cs" />
     <Compile Include="AgentAssigningStep.cs" />
   </ItemGroup>
