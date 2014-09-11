@@ -22,6 +22,10 @@ namespace CallPlanKata
                 response = _webService.GetOriginatorSpecificData(interaction);
                 interaction.Data = response.ToString();
             }
+            catch(TimeoutException)
+            {
+                interaction.Data = "Time-out";
+            }
             catch(Exception)
             {
                 interaction.Data = "Error Xyz";
