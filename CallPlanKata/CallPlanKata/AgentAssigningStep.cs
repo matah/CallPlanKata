@@ -14,21 +14,13 @@ namespace CallPlanKata
         }
         public void Execute(Interaction interaction)
         {
-            var agents = _agentsService.GetAvailableAgentsFromGroupForInteraction(interaction);
-            var assignedAgent = agents.FirstOrDefault();
+            var agents = _agentsService.GetAgentsFromGroup(interaction.State.AssignedGroupId);
 
-            if (assignedAgent != null)
+            var availableAgent = agents.FirstOrDefault(a => a.TryHandleInteraction(interaction.Type));
+
+            if(availableAgent != null)
             {
-                if (interaction.Type == InteractionType.call)
-                {
-                    assignedAgent.IsHandlingCall = true;
-                }
-                else if(interaction.Type == InteractionType.email)
-                {
-                    assignedAgent.NumberOfAssignedEmails++;
-                }
-
-                interaction.Summary += string.Format("and Agent \"{0}\"\"", assignedAgent.Id); 
+                interaction.Summary += string.Format("and Agent \"{0}\"", availableAgent.Id);
             }
             else
             {

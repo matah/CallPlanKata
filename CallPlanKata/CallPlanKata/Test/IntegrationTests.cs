@@ -24,7 +24,6 @@ namespace CallPlanKata
         {
             var interaction = CreateTestEmailInteraction();
 
-
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(webServiceResponse);
 
             var callPlan = ConfigureTestCallPlan();
@@ -63,11 +62,10 @@ namespace CallPlanKata
         public void GivenAnInteractionComesIntoTheSystemWhenTheWebServiceRespondsWithAnErrorThenTheInteractionGetsAssignedToAnAgentInGroupC()
         {
             var interaction = CreateTestEmailInteraction();
+
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Throw(new Exception());
 
             var callPlan = ConfigureTestCallPlan();
-
-
 
             callPlan.ReceiveInteraction(interaction);
 

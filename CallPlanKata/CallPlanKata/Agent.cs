@@ -8,9 +8,50 @@ namespace CallPlanKata
 	{
         public long Id { get; set; }
 
-        public bool IsHandlingCall { get; set; }
+        private bool _isHandlingCall = false;
 
-        public int NumberOfAssignedEmails { get; set; }
+        private int _numberOfAssignedEmails = 0;
+
+        public bool TryHandleInteraction(InteractionType type)
+        {
+            if(CanHandleInteraction(type))
+            {
+                AssignInteraction(type);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool CanHandleInteraction(InteractionType type)
+        {
+            if(type == InteractionType.email)
+            {
+                return _numberOfAssignedEmails < 5;
+            }
+
+            if(type == InteractionType.call)
+            {
+                return !_isHandlingCall;
+            }
+
+            return false;
+        }
+
+        private void AssignInteraction(InteractionType type)
+        {
+            if(type == InteractionType.email)
+            {
+                _numberOfAssignedEmails++;
+            }
+
+            if(type == InteractionType.call)
+            {
+                _isHandlingCall = true;
+            }
+        }
 	}
 
 

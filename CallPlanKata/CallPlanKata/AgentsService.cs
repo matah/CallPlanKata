@@ -13,18 +13,9 @@ namespace CallPlanKata
             _agentGroups = agentGroups;
         }
 
-        public List<Agent> GetAvailableAgentsFromGroupForInteraction(Interaction interaction)
+        public List<Agent> GetAgentsFromGroup(GroupId id)
         {
-            var group = _agentGroups.Single(ag => ag.Id == interaction.State.AssignedGroupId);
-
-            if(interaction.Type == InteractionType.email)
-            {
-                return group.Agents.Where(a => a.NumberOfAssignedEmails < 5).ToList();
-            }
-            else
-            {
-                return group.Agents.Where(a => !a.IsHandlingCall && a.NumberOfAssignedEmails <= 5).ToList();
-            }
+            return _agentGroups.Single(ag => ag.Id == id).Agents.ToList();
         }
     }
 }
