@@ -8,17 +8,13 @@ namespace CallPlanKata
     [TestFixture]
     public class IntegrationTests
     {
-        private readonly IWebService _fakeWebService;
+        private IWebService _fakeWebService;
         private AgentsService _agentsService;
-
-        public IntegrationTests()
-        {
-            _fakeWebService = MockRepository.GenerateMock<IWebService>();
-        }
 
         [SetUp]
         public void TestSetUp()
         {
+            _fakeWebService = MockRepository.GenerateMock<IWebService>();
             SetUpAgentGroupsAndAgents();
         }
 
@@ -28,9 +24,11 @@ namespace CallPlanKata
         {
             var interaction = CreateTestEmailInteraction();
 
-            var callPlan = ConfigureTestCallPlan();
 
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(webServiceResponse);
+
+            var callPlan = ConfigureTestCallPlan();
+
 
             callPlan.ReceiveInteraction(interaction);
 
@@ -47,9 +45,10 @@ namespace CallPlanKata
         {
             var interaction = CreateTestEmailInteraction();
 
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(webServiceResponse);
+
             var callPlan = ConfigureTestCallPlan();
 
-            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(webServiceResponse);
 
             callPlan.ReceiveInteraction(interaction);
 
@@ -64,10 +63,11 @@ namespace CallPlanKata
         public void GivenAnInteractionComesIntoTheSystemWhenTheWebServiceRespondsWithAnErrorThenTheInteractionGetsAssignedToAnAgentInGroupC()
         {
             var interaction = CreateTestEmailInteraction();
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Throw(new Exception());
 
             var callPlan = ConfigureTestCallPlan();
 
-            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Throw(new Exception());
+
 
             callPlan.ReceiveInteraction(interaction);
 
@@ -83,9 +83,9 @@ namespace CallPlanKata
         {
             var interaction = CreateTestEmailInteraction();
 
-            var callPlan = ConfigureTestCallPlan();
-
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Throw(new TimeoutException());
+
+            var callPlan = ConfigureTestCallPlan();
 
             callPlan.ReceiveInteraction(interaction);
 
@@ -104,17 +104,11 @@ namespace CallPlanKata
             var interaction3 = CreateTestCallInteraction();
             var interaction4 = CreateTestCallInteraction();
 
-            var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
-            var groupAssigningStep = new GroupAssigningStep();
-            var agentAssigningStep = new AgentAssigningStep(_agentsService);
-
-
-            var callPlan = new CallPlan();
-            callPlan.AppendStep(getOrginatorSpecificDataStep);
-            callPlan.AppendStep(groupAssigningStep);
-            callPlan.AppendStep(agentAssigningStep);
-
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Anything)).Return(2);
+
+            var callPlan = ConfigureTestCallPlan();
+
+
 
             callPlan.ReceiveInteraction(interaction1);
             callPlan.ReceiveInteraction(interaction2);
@@ -144,6 +138,32 @@ namespace CallPlanKata
             StringAssert.Contains("Receive call from \"" + interaction4.Id + "\"", result);
             StringAssert.Contains("Invoke function with \"" + interaction4.Id + "\", response is \"2\"", result);
             StringAssert.Contains("Deliver to group \"A\" all agents are busy", result);
+        }
+
+        [Test]
+        public void GivenACallInteractionAndAnEmailInteractionWhenWebServiceRespondsWithEvenNumberThenEachInteractionGetsAssignedToSameAgent()
+        {
+            var emailInteraction = CreateTestEmailInteraction();
+            var callInteraction = CreateTestCallInteraction();
+
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Anything)).Return(2);
+
+            var callPlan = ConfigureTestCallPlan();
+
+            callPlan.ReceiveInteraction(emailInteraction);
+            callPlan.ReceiveInteraction(callInteraction);
+
+            var result = callPlan.PrintSummary(emailInteraction);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
+
+            result = callPlan.PrintSummary(callInteraction);
+
+            StringAssert.Contains("Receive call from \"" + callInteraction.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + callInteraction.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
         }
 
         private void SetUpAgentGroupsAndAgents()
@@ -212,7 +232,7 @@ namespace CallPlanKata
             _agentsService = new AgentsService(agentGroups);
         }
 
-        static Interaction CreateTestCallInteraction()
+        private Interaction CreateTestCallInteraction()
         {
             var interaction = new Interaction() {
                 Id = "12345",
@@ -221,7 +241,7 @@ namespace CallPlanKata
             return interaction;
         }
 
-        static Interaction CreateTestEmailInteraction()
+        private Interaction CreateTestEmailInteraction()
         {
             var interaction = new Interaction() {
                 Id = "bob@test.com",
@@ -230,7 +250,7 @@ namespace CallPlanKata
             return interaction;
         }
 
-        CallPlan ConfigureTestCallPlan()
+        private CallPlan ConfigureTestCallPlan()
         {
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var groupAssigningStep = new GroupAssigningStep();
