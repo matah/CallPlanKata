@@ -224,6 +224,25 @@ namespace CallPlanKata
             StringAssert.Contains("Deliver to group \"A\" and Agent \"2\"", result);
         }
 
+        [Test]
+        public void Given16EmailInteractionsArriveWhenTheWebServiceResponsedWithEvenNumberThenTheLastInteractionContainsAgentBusyMessage()
+        {
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Anything)).Return(2);
+
+            var callPlan = ConfigureTestCallPlan();
+
+            Interaction interaction = null;
+            for(var i = 0 ; i < 16; i++)
+            {
+                interaction = CreateTestEmailInteraction();
+                callPlan.ReceiveInteraction(interaction);
+            }
+
+            var result = callPlan.PrintSummary(interaction);
+
+            StringAssert.Contains("Deliver to group \"A\" all agents are busy", result);
+        }
+
         private void SetUpAgentGroupsAndAgents()
         {
             var agentGroups = new List<AgentGroup>
