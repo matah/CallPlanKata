@@ -10,7 +10,7 @@ namespace CallPlanKata
 
         public bool IsHandlingCall { get; set; }
 
-        //public int NumberOfAssignedEmails { get; set; }
+        public int NumberOfAssignedEmails { get; set; }
 	}
 
 

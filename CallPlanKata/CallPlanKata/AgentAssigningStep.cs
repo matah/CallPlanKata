@@ -14,7 +14,7 @@ namespace CallPlanKata
         }
         public void Execute(Interaction interaction)
         {
-            var agents = _agentsService.GetAvailableAgentsFromGroup(interaction.State.AssignedGroupId);
+            var agents = _agentsService.GetAvailableAgentsFromGroupForInteraction(interaction);
             var assignedAgent = agents.FirstOrDefault();
 
             if (assignedAgent != null)
@@ -22,6 +22,10 @@ namespace CallPlanKata
                 if (interaction.Type == InteractionType.call)
                 {
                     assignedAgent.IsHandlingCall = true;
+                }
+                else if(interaction.Type == InteractionType.email)
+                {
+                    assignedAgent.NumberOfAssignedEmails++;
                 }
 
                 interaction.Summary += string.Format("and Agent \"{0}\"\"", assignedAgent.Id); 
