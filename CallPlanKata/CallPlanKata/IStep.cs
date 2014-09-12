@@ -5,7 +5,7 @@ namespace CallPlanKata
 {
 	public interface IStep
 	{
-        string Execute(Interaction interaction);
+        void Execute(Interaction state);
 	}
 }
 

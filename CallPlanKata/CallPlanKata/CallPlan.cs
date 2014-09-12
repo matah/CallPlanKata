@@ -7,7 +7,6 @@ namespace CallPlanKata
 	public class CallPlan
 	{
         private readonly List<IStep> _steps;
-        private string _summary = "";
 
         public CallPlan()
         {
@@ -21,17 +20,17 @@ namespace CallPlanKata
 
         public void ReceiveInteraction(Interaction interaction)
         {
-            _summary += string.Format("Receive {0} from \"{1}\"\n", interaction.Type, interaction.Id);
+            interaction.Summary += string.Format("Receive {0} from \"{1}\"\n", interaction.Type, interaction.Id);
 
             foreach(var step in _steps)
             {
-                _summary += step.Execute(interaction);
+                step.Execute(interaction);
             }
         }
 
-        public string PrintSummary()
+        public string PrintSummary(Interaction interaction)
         {
-            return _summary;
+            return interaction.Summary;
         }
 	}
 

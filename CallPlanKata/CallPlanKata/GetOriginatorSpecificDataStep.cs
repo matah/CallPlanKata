@@ -13,25 +13,25 @@ namespace CallPlanKata
             _webService = webService;
         }
 
-        public string Execute(Interaction interaction)
+        public void Execute(Interaction interaction)
         {
             int response;
 
             try
             {
                 response = _webService.GetOriginatorSpecificData(interaction);
-                interaction.Data = response.ToString();
+                interaction.State.Data = response.ToString();
             }
             catch(TimeoutException)
             {
-                interaction.Data = "Time-out";
+                interaction.State.Data = "Time-out";
             }
             catch(Exception)
             {
-                interaction.Data = "Error Xyz";
+                interaction.State.Data = "Error Xyz";
             }
 
-            return string.Format("Invoke function with \"{0}\", response is \"{1}\"\n", interaction.Id, interaction.Data);
+            interaction.Summary += string.Format("Invoke function with \"{0}\", response is \"{1}\"\n", interaction.Id, interaction.State.Data);
         }
 	}
 
