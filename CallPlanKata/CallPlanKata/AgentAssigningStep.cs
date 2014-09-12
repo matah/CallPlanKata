@@ -19,7 +19,11 @@ namespace CallPlanKata
 
             if (assignedAgent != null)
             {
-                assignedAgent.IsHandlingCall = true;
+                if (interaction.Type == InteractionType.call)
+                {
+                    assignedAgent.IsHandlingCall = true;
+                }
+
                 interaction.Summary += string.Format("and Agent \"{0}\"\"", assignedAgent.Id); 
             }
             else
