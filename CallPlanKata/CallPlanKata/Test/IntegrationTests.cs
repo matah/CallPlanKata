@@ -166,6 +166,64 @@ namespace CallPlanKata
             StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
         }
 
+        [Test]
+        public void GivenASixEmailInteractionsWhenWebServiceRespondsWithEvenNumberThenEachFiveInteractionsGetsAssignedToFirstAgentAndLastGetsAssignedToAnotherAgent()
+        {
+            var emailInteraction1 = CreateTestEmailInteraction();
+            var emailInteraction2 = CreateTestEmailInteraction();
+            var emailInteraction3 = CreateTestEmailInteraction();
+            var emailInteraction4 = CreateTestEmailInteraction();
+            var emailInteraction5 = CreateTestEmailInteraction();
+            var emailInteraction6 = CreateTestEmailInteraction();
+
+            _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Anything)).Return(2);
+
+            var callPlan = ConfigureTestCallPlan();
+
+            callPlan.ReceiveInteraction(emailInteraction1);
+            callPlan.ReceiveInteraction(emailInteraction2);
+            callPlan.ReceiveInteraction(emailInteraction3);
+            callPlan.ReceiveInteraction(emailInteraction4);
+            callPlan.ReceiveInteraction(emailInteraction5);
+            callPlan.ReceiveInteraction(emailInteraction6);
+
+            var result = callPlan.PrintSummary(emailInteraction1);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction1.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction1.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
+
+            result = callPlan.PrintSummary(emailInteraction2);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction2.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction2.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
+
+            result = callPlan.PrintSummary(emailInteraction3);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction3.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction3.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
+
+            result = callPlan.PrintSummary(emailInteraction4);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction4.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction4.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
+
+            result = callPlan.PrintSummary(emailInteraction5);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction5.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction5.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"1\"", result);
+
+            result = callPlan.PrintSummary(emailInteraction6);
+
+            StringAssert.Contains("Receive email from \"" + emailInteraction6.Id + "\"", result);
+            StringAssert.Contains("Invoke function with \"" + emailInteraction6.Id + "\", response is \"2\"", result);
+            StringAssert.Contains("Deliver to group \"A\" and Agent \"2\"", result);
+        }
+
         private void SetUpAgentGroupsAndAgents()
         {
             var agentGroups = new List<AgentGroup>
