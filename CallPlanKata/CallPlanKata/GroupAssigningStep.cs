@@ -8,24 +8,22 @@ namespace CallPlanKata
 	{
         public void Execute(Interaction interaction)
         {
-            var agentGroup = "";
-
             var response = 0;
 
             if(!Int32.TryParse(interaction.State.Data, out response))
             {
-                agentGroup = "C";
+                interaction.State.AssignedGroupId = GroupId.C;
             }
             else if(response % 2 == 0)
             {
-                agentGroup = "A";
+                interaction.State.AssignedGroupId = GroupId.A;
             }
             else
             {
-                agentGroup = "B";
+                interaction.State.AssignedGroupId = GroupId.B;
             }
 
-            interaction.Summary += string.Format("Deliver to group \"{0}\" ", agentGroup);
+            interaction.Summary += string.Format("Deliver to group \"{0}\" ", interaction.State.AssignedGroupId);
         }
 	}
 }

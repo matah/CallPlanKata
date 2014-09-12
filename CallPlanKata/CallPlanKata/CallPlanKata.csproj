@@ -47,6 +47,9 @@
     <Compile Include="AgentAssigningStep.cs" />
     <Compile Include="Test\HappyPathTests.cs" />
     <Compile Include="InteractionState.cs" />
+    <Compile Include="AgentGroup.cs" />
+    <Compile Include="Agent.cs" />
+    <Compile Include="AgentsService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

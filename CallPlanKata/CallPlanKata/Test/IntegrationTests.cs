@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using Rhino.Mocks;
+using System.Collections.Generic;
 
 namespace CallPlanKata
 {
@@ -8,10 +9,17 @@ namespace CallPlanKata
     public class IntegrationTests
     {
         private readonly IWebService _fakeWebService;
+        private AgentsService _agentsService;
 
         public IntegrationTests()
         {
             _fakeWebService = MockRepository.GenerateMock<IWebService>();
+        }
+
+        [SetUp]
+        public void TestSetUp()
+        {
+            SetUpAgentGroupsAndAgents();
         }
 
         [TestCase(2)]
@@ -26,7 +34,7 @@ namespace CallPlanKata
 
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var groupAssigningStep = new GroupAssigningStep();
-            var agentAssgningStep = new AgentAssigningStep();
+            var agentAssgningStep = new AgentAssigningStep(_agentsService);
 
             var callPlan = new CallPlan();
             callPlan.AppendStep(getOrginatorSpecificDataStep);
@@ -56,7 +64,7 @@ namespace CallPlanKata
 
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var groupAssigningStep = new GroupAssigningStep();
-            var agentAssigningStep = new AgentAssigningStep();
+            var agentAssigningStep = new AgentAssigningStep(_agentsService);
 
             var callPlan = new CallPlan();
             callPlan.AppendStep(getOrginatorSpecificDataStep);
@@ -85,7 +93,7 @@ namespace CallPlanKata
 
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var groupAssigningStep = new GroupAssigningStep();
-            var agentAssigningStep = new AgentAssigningStep();
+            var agentAssigningStep = new AgentAssigningStep(_agentsService);
 
             var callPlan = new CallPlan();
             callPlan.AppendStep(getOrginatorSpecificDataStep);
@@ -114,7 +122,7 @@ namespace CallPlanKata
 
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var groupAssigningStep = new GroupAssigningStep();
-            var agentAssigningStep = new AgentAssigningStep();
+            var agentAssigningStep = new AgentAssigningStep(_agentsService);
 
             var callPlan = new CallPlan();
             callPlan.AppendStep(getOrginatorSpecificDataStep);
@@ -143,7 +151,7 @@ namespace CallPlanKata
 
             var getOrginatorSpecificDataStep = new GetOriginatorSpecificDataStep(_fakeWebService);
             var groupAssigningStep = new GroupAssigningStep();
-            var agentAssigningStep = new AgentAssigningStep();
+            var agentAssigningStep = new AgentAssigningStep(_agentsService);
 
 
             var callPlan = new CallPlan();
@@ -153,6 +161,9 @@ namespace CallPlanKata
 
             _fakeWebService.Stub(fws => fws.GetOriginatorSpecificData(Arg<Interaction>.Is.Equal(interaction))).Return(2);
 
+            callPlan.ReceiveInteraction(interaction);
+            callPlan.ReceiveInteraction(interaction);
+            callPlan.ReceiveInteraction(interaction);
             callPlan.ReceiveInteraction(interaction);
 
             var result = callPlan.PrintSummary(interaction);
@@ -172,6 +183,72 @@ namespace CallPlanKata
             StringAssert.Contains("Receive call from \"12345\"", result);
             StringAssert.Contains("Invoke function with \"12345\", response is \"2\"", result);
             StringAssert.Contains("Deliver to group \"A\" all agents are busy", result);
+        }
+
+        private void SetUpAgentGroupsAndAgents()
+        {
+            var agentGroups = new List<AgentGroup>
+            {
+                new AgentGroup
+                {
+                    Id = GroupId.A,
+                    Agents = new List<Agent>
+                    {
+                        new Agent
+                        {
+                            Id = 1
+                        },
+                        new Agent
+                        {
+                            Id = 2
+                        },
+                        new Agent
+                        {
+                            Id = 3
+                        },
+                    }
+                },
+                new AgentGroup
+                {
+                    Id = GroupId.B,
+                    Agents = new List<Agent>
+                    {
+                        new Agent
+                        {
+                            Id = 1
+                        },
+                        new Agent
+                        {
+                            Id = 2
+                        },
+                        new Agent
+                        {
+                            Id = 3
+                        },
+                    }
+                },
+                new AgentGroup
+                {
+                    Id = GroupId.C,
+                    Agents = new List<Agent>
+                    {
+                        new Agent
+                        {
+                            Id = 1
+                        },
+                        new Agent
+                        {
+                            Id = 2
+                        },
+                        new Agent
+                        {
+                            Id = 3
+                        },
+                    }
+                },
+            };
+
+            _agentsService = new AgentsService(agentGroups);
         }
     }
 }

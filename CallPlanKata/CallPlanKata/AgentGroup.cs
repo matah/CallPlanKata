@@ -1,13 +1,14 @@
 using System;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace CallPlanKata
 {
-	public class Group
+	public class AgentGroup
 	{
         public GroupId Id {get; set; }
 
-        public List<Agent> Agent { get; set; }
+        public IEnumerable<Agent> Agents { get; set; }
 	}
 
     public enum GroupId
