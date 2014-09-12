@@ -106,8 +106,6 @@ namespace CallPlanKata
 
             var callPlan = ConfigureTestCallPlan();
 
-
-
             callPlan.ReceiveInteraction(interaction1);
             callPlan.ReceiveInteraction(interaction2);
             callPlan.ReceiveInteraction(interaction3);
